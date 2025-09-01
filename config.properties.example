@@ -1,0 +1,34 @@
+# AI Intelligence Plugin Configuration
+# ===============================================
+# Copy this file to config.properties and fill in your actual values
+# DO NOT commit config.properties to version control
+
+# Maven Configuration
+maven.home=C:\\Users\\Shan\\Documents\\MAS\\maven-mvnd-1.0.2-windows-amd64\\mvn\\bin\\mvn.cmd
+
+# Appian SDK Configuration
+appian.sdk.path=lib/appian-plug-in-sdk.jar
+
+# Data File Paths
+standard.headers.file=../client/data/input/sibs.csv
+buy.sheet.headers.file=../client/data/input/VS - OCC Extract MAS -NEW.csv
+existing.mappings.file=../client/data/input/VSI mapping.csv
+
+# Client Configuration
+client.config.file=src/main/resources/client-config.properties
+output.directory=client-output/responses
+
+# Build Output Paths
+client.target.dir=client/target
+plugin.target.dir=target
+
+# API Keys (REQUIRED - fill in your actual values)
+openai.api.key=your_openai_api_key_here
+aws.access.key.id=your_aws_access_key_here
+aws.secret.access.key=your_aws_secret_key_here
+aws.default.region=us-west-2
+
+# AI Model Configuration
+default.model.id=gpt-4
+default.temperature=0.7
+default.max.tokens=1000

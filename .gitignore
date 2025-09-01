@@ -1,0 +1,57 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Configuration files with sensitive data
+config.properties
+.env
+*.env
+
+# Logs
+*.log
+logs/
+
+# Build outputs
+client/target/
+target/
+*.jar
+*.war
+*.ear
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Client output
+client-output/
+output/
+responses/

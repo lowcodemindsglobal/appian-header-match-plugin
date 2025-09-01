@@ -1,0 +1,180 @@
+External Material Group
+Customer Style Number
+Cust Style_1
+Cust Style_2
+Style Description
+Color Code
+Color Code_1
+Color Code_2
+Color Code_3
+Color Description
+Season
+Season_1
+Season_2
+FG Criteria (Basic Material)
+Customer Purchase Order
+Customer Purchase Order_1
+Customer Purchase Order_2
+PO LI
+Vendor Purchase Order
+Unit of Measure (for FG)
+Unit of Measure (for FG)_1
+Denominator
+Material Group
+Alternative UOM
+Product Hierarchy
+Customer Product Reference_1
+Product Hierarchy Description
+Def. Grid Value
+Master Grid
+Def. Stock Category
+Gender
+Gender_1
+Material description
+Customer Department
+Customer Department _1
+SAP Fabric Content Code
+Customer FCC_1
+SAP Fabric Content Code Description
+Product Family
+Customer Reference 1
+Customer Reference 2
+Customer Reference 3
+Special Procurement Type
+Purch Org
+Price Unit
+FG Sizes
+FG Order Quantity
+FG Price (FOB)
+FG Price (FOB)_1
+Product Type
+Repeat Style
+Sales Organization
+Storage Location
+Distribution Channel
+Division
+Material Type
+HS Code
+HS Code_1
+Purchasing Group (for 3rd Party Finished Goods)
+Prod. Stor. Location
+Automation team (Apex/Non-Apex)
+Possible RM InHouse Date
+Customer Number (Sold to Party)
+Customer Number (Sold to Party)_1
+Customer Number (Sold to Party)_2
+Customer Number (Sold to Party)_3
+Ship to party
+Ship to party_1
+Ship to party_2
+Ship Mode
+Ship Mode_1
+Requirement category
+Regions
+Regions_1
+Regions_2
+Actual Production Plant Allocated
+Requested Delivery Date
+GAC
+NDC
+Order Delivery Tolerance
+Under Delivery Tolerance
+Order Type
+Order Reason
+Purchase Order Type
+Purchase Order Type_1
+Purchase Order Type_2
+Sales Office
+Sales Group
+Sample Type
+TP Vendor (ThirdParty Orders)
+Buy Sequence
+Inquiry #
+Usage Indicator
+Standard Price (ThirdParty Orders)
+Sizewise PO Pricing (ThirdParty Orders)
+Buy Name
+Buy Program
+Buy Month
+Buy Year
+PP Month
+PP Year
+SO Sales Text
+SO Short Text
+QTY
+FOB
+Development Style Number
+Fabric Type
+Main Fabric
+Booking Form Number
+Buy Date
+Original Sales Organization
+Innovation Details
+FG creation task owner
+FG Task assign date
+FG task Completion date
+FG Code
+Projection Stage Plant Allocation
+Costed RM (RMC)
+Fabric Type Description
+SAP Subcon Type
+Costed SMV (Min) Routed SMV (Min)
+Buy/Projection?
+Costed Transfer Price
+Pre to Actual
+Pack code
+Sub Family
+Fabric Design
+SBU
+Original Plant
+Revised NDC Date
+Revised GAC
+Freight Forwarder
+Owner of the Style
+SO Creation Task Owner
+SO Task Assign Date
+SO Task Completion Date
+Sales Order Number (to be added after SO creation)
+Sales Order Line Item (to be added after SO creation)
+Ref SO (For Changes)
+Ref LI (for Changes)
+Required RM InHouse Date
+Planning conf. RDD
+Assignment Number
+Pricing Indicator/Method (e.g., Plant/Size Wise/Region)
+Per Day Output of Subcontracting
+Semi Garment Form Subcontracting
+Sub con form
+Apex SO
+Apex SO Li
+Final Audit Requirement
+Billing block
+Cancel Date
+Customer Name
+Completion date
+CRD
+Initial Quoted Delivery Date
+Is complete
+Qualifier
+Incoterms 1
+Incoterms 2
+PO Date
+Terms of Payment
+Bill-to-party
+Consignee
+Employee Responsible
+Mark For
+Notify Party
+Rev. Delivery date
+Schedule line
+Commission No
+Delivery block
+Payer
+Reason for Rejection
+Pricing Condition Type - Line level size level
+Owner of the Style Dev Stage
+XVBR cond.
+Price at size level
+Ref Number / Buy Reference
+Buy Create Date
+Buy Type (Bulk/Rapid/Sample)
