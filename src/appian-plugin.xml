@@ -7,5 +7,5 @@
     </plugin-info>
 
     <!--  Smart Services  -->
-    <smart-service name="AI Intelligence Service" key="aiintelligence" class="com.example.plugins.aiintelligence.AIIntelligenceService" />
+    <smart-service name="AI Intelligence Service" key="aiintelligence_v2" class="com.example.plugins.aiintelligence.AIIntelligenceService" />
 </appian-plugin>

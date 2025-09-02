@@ -1,16 +1,22 @@
 package com.example.plugins.aiintelligence.domain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents the result of matching a source column header to a target column header.
  * Contains confidence scoring, reasoning, and reference mapping usage information.
  */
 public class ColumnMatchingResult {
     
+    private static final Logger logger = LoggerFactory.getLogger(ColumnMatchingResult.class);
+    
     private String sourceHeader;
     private String matchedTargetHeader;
     private Double confidencePercentage;
     private String reasoning;
     private Boolean usedExistingMapping;
+    private Boolean valid;
     
     /**
      * Default constructor for JSON deserialization
@@ -35,6 +41,8 @@ public class ColumnMatchingResult {
         this.confidencePercentage = confidencePercentage;
         this.reasoning = reasoning;
         this.usedExistingMapping = usedExistingMapping;
+        logger.debug("Created ColumnMatchingResult: {} -> {} (confidence: {}%, usedExisting: {})", 
+                    sourceHeader, matchedTargetHeader, confidencePercentage, usedExistingMapping);
     }
     
     // Getters and Setters
@@ -79,6 +87,14 @@ public class ColumnMatchingResult {
         this.usedExistingMapping = usedExistingMapping;
     }
     
+    public Boolean getValid() {
+        return valid;
+    }
+    
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
+    
     @Override
     public String toString() {
         return String.format("ColumnMatchingResult{sourceHeader='%s', matchedTargetHeader='%s', " +
@@ -93,10 +109,19 @@ public class ColumnMatchingResult {
      * @return true if valid, false otherwise
      */
     public boolean isValid() {
-        return sourceHeader != null && !sourceHeader.trim().isEmpty() &&
+        boolean isValid = sourceHeader != null && !sourceHeader.trim().isEmpty() &&
                matchedTargetHeader != null && !matchedTargetHeader.trim().isEmpty() &&
                confidencePercentage != null && confidencePercentage >= 0 && confidencePercentage <= 100 &&
                reasoning != null && !reasoning.trim().isEmpty() &&
-               usedExistingMapping != null;
+               usedExistingMapping != null &&
+               (valid == null || valid); // Consider valid if not set or explicitly true
+        
+        if (!isValid) {
+            logger.debug("ColumnMatchingResult validation failed: sourceHeader='{}', matchedTargetHeader='{}', " +
+                        "confidencePercentage={}, reasoning='{}', usedExistingMapping={}, valid={}", 
+                        sourceHeader, matchedTargetHeader, confidencePercentage, reasoning, usedExistingMapping, valid);
+        }
+        
+        return isValid;
     }
 }

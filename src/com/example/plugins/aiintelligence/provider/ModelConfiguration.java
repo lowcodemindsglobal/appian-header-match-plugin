@@ -1,10 +1,15 @@
 package com.example.plugins.aiintelligence.provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Configuration for AI model parameters that are common across different providers.
  * This class encapsulates the standard parameters used to control AI model behavior.
  */
 public class ModelConfiguration {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ModelConfiguration.class);
     
     private String modelId;
     private Double temperature;
@@ -31,6 +36,7 @@ public class ModelConfiguration {
     public ModelConfiguration(String modelId) {
         this();
         this.modelId = modelId;
+        logger.debug("Created ModelConfiguration with modelId: {}", modelId);
     }
     
     /**
@@ -49,6 +55,8 @@ public class ModelConfiguration {
         this.maxTokens = maxTokens != null ? maxTokens : 4000;
         this.topP = topP != null ? topP : 1.0;
         this.topK = topK != null ? topK : 50;
+        logger.debug("Created ModelConfiguration: modelId={}, temperature={}, maxTokens={}, topP={}, topK={}", 
+                    modelId, this.temperature, this.maxTokens, this.topP, this.topK);
     }
     
     // Getters and Setters
@@ -99,11 +107,18 @@ public class ModelConfiguration {
      * @return true if valid, false otherwise
      */
     public boolean isValid() {
-        return modelId != null && !modelId.trim().isEmpty() &&
+        boolean isValid = modelId != null && !modelId.trim().isEmpty() &&
                temperature >= 0.0 && temperature <= 2.0 &&
                maxTokens > 0 && maxTokens <= 100000 &&
                topP >= 0.0 && topP <= 1.0 &&
                topK > 0;
+        
+        if (!isValid) {
+            logger.debug("ModelConfiguration validation failed: modelId='{}', temperature={}, maxTokens={}, topP={}, topK={}", 
+                        modelId, temperature, maxTokens, topP, topK);
+        }
+        
+        return isValid;
     }
     
     @Override

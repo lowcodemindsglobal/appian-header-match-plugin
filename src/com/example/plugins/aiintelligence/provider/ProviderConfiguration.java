@@ -2,12 +2,16 @@ package com.example.plugins.aiintelligence.provider;
 
 import java.util.Map;
 import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Configuration for AI providers that contains provider-specific parameters.
  * This class allows for flexible configuration of different AI services.
  */
 public class ProviderConfiguration {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ProviderConfiguration.class);
     
     private String providerId;
     private String providerName;
@@ -30,6 +34,7 @@ public class ProviderConfiguration {
         this();
         this.providerId = providerId;
         this.providerName = providerName;
+        logger.debug("Created ProviderConfiguration: {} ({})", providerId, providerName);
     }
     
     // Getters and Setters
@@ -85,6 +90,7 @@ public class ProviderConfiguration {
      */
     public void setParameter(String key, Object value) {
         parameters.put(key, value);
+        logger.debug("Set parameter {} = {}", key, value != null ? "***" : "null");
     }
     
     /**
@@ -139,8 +145,15 @@ public class ProviderConfiguration {
      * @return true if valid, false otherwise
      */
     public boolean isValid() {
-        return providerId != null && !providerId.trim().isEmpty() &&
+        boolean isValid = providerId != null && !providerId.trim().isEmpty() &&
                providerName != null && !providerName.trim().isEmpty();
+        
+        if (!isValid) {
+            logger.debug("ProviderConfiguration validation failed: providerId='{}', providerName='{}'", 
+                        providerId, providerName);
+        }
+        
+        return isValid;
     }
     
     @Override

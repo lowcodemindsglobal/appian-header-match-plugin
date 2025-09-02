@@ -23,31 +23,44 @@ import java.util.stream.Collectors;
 public abstract class AbstractAIProvider implements AIProvider {
     
     protected static final Logger logger = LoggerFactory.getLogger(AbstractAIProvider.class);
-    protected static final ObjectMapper objectMapper = new ObjectMapper();
+    protected static final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     
     protected ProviderConfiguration configuration;
     protected boolean initialized = false;
     
     @Override
     public boolean isReady() {
-        return initialized && configuration != null && configuration.isValid();
+        boolean ready = initialized && configuration != null && configuration.isValid();
+        logger.debug("Provider {} readiness check: initialized={}, configuration={}, valid={}, ready={}", 
+                    getProviderId(), initialized, configuration != null, 
+                    configuration != null ? configuration.isValid() : false, ready);
+        return ready;
     }
     
     @Override
     public void validateConfiguration(ProviderConfiguration configuration) throws AIProviderException {
+        logger.info("Validating configuration for provider: {}", getProviderId());
+        
         if (configuration == null) {
+            logger.error("Configuration cannot be null for provider: {}", getProviderId());
             throw new AIProviderException("Configuration cannot be null");
         }
         
         if (!configuration.isValid()) {
+            logger.error("Configuration is invalid for provider: {}", getProviderId());
             throw new AIProviderException("Configuration is invalid");
         }
         
+        logger.debug("Basic configuration validation passed for provider: {}", getProviderId());
+        
         // Validate provider-specific configuration
+        logger.debug("Performing provider-specific configuration validation");
         validateProviderConfiguration(configuration);
         
         this.configuration = configuration;
         this.initialized = true;
+        logger.info("Configuration validation completed successfully for provider: {}", getProviderId());
     }
     
     @Override
@@ -84,9 +97,11 @@ public abstract class AbstractAIProvider implements AIProvider {
                     
                     // Build prompt for single column
                     String prompt = buildSingleColumnMatchingPrompt(sourceHeader, targetHeaders, existingMappings, industryContext);
+                    logger.debug("Built prompt for header '{}', length: {} characters", sourceHeader, prompt.length());
                     
                     // Send request to AI provider
                     String response = sendAIRequest(prompt, modelConfiguration);
+                    logger.debug("Received response for header '{}', length: {} characters", sourceHeader, response.length());
                     
                     // Parse the single result
                     ColumnMatchingResult result = parseSingleColumnResponse(response, sourceHeader);
@@ -97,6 +112,7 @@ public abstract class AbstractAIProvider implements AIProvider {
                     
                 } catch (Exception e) {
                     logger.warn("Failed to process unmapped header '{}', using default result: {}", sourceHeader, e.getMessage());
+                    logger.debug("Exception details for header '{}':", sourceHeader, e);
                     
                     // Create a default result for failed columns
                     ColumnMatchingResult defaultResult = new ColumnMatchingResult(
@@ -117,7 +133,11 @@ public abstract class AbstractAIProvider implements AIProvider {
             
         } catch (Exception e) {
             String errorMsg = "Column matching failed";
-            logger.error(errorMsg, e);
+            logger.error("{} for provider: {}", errorMsg, getProviderId(), e);
+            logger.debug("Column matching failure details - Source headers: {}, Target headers: {}, Existing mappings: {}", 
+                        sourceHeaders != null ? sourceHeaders.length : 0, 
+                        targetHeaders != null ? targetHeaders.length : 0,
+                        existingMappings != null ? existingMappings.size() : 0);
             throw new AIProviderException(errorMsg, getProviderId(), "column_matching", e);
         }
     }
@@ -238,7 +258,11 @@ public abstract class AbstractAIProvider implements AIProvider {
     private String buildSingleColumnMatchingPrompt(String sourceHeader, String[] targetHeaders, 
                                                 List<ColumnMapping> existingMappings, String industryContext) {
         
+        logger.debug("Building prompt for source header: '{}' with {} target headers and {} existing mappings", 
+                    sourceHeader, targetHeaders.length, existingMappings != null ? existingMappings.size() : 0);
+        
         StringBuilder prompt = new StringBuilder();
+        prompt.append("CRITICAL INSTRUCTION: You are a JSON API. You must respond with ONLY valid JSON. No markdown, no explanations, no additional text.\n\n");
         prompt.append("TASK: Match ONE source header to the most appropriate target header using the following approach:\n");
         prompt.append("1. EXACT matches from existing mappings (100% confidence)\n");
         prompt.append("2. PATTERN-based matches learned from existing mappings (high confidence)\n");
@@ -281,7 +305,8 @@ public abstract class AbstractAIProvider implements AIProvider {
             prompt.append("INDUSTRY CONTEXT: ").append(industryContext).append("\n\n");
         }
         
-        prompt.append("OUTPUT: Return a JSON object with this exact structure:\n");
+        prompt.append("CRITICAL: You must respond with ONLY a valid JSON object. Do not include any markdown formatting, explanations, or additional text.\n");
+        prompt.append("OUTPUT FORMAT: Return ONLY this JSON object:\n");
         prompt.append("{\n");
         prompt.append("  \"sourceHeader\": \"").append(sourceHeader).append("\",\n");
         prompt.append("  \"matchedTargetHeader\": \"string\",\n");
@@ -289,8 +314,12 @@ public abstract class AbstractAIProvider implements AIProvider {
         prompt.append("  \"reasoning\": \"string\",\n");
         prompt.append("  \"usedExistingMapping\": boolean\n");
         prompt.append("}\n");
+        prompt.append("\n");
+        prompt.append("IMPORTANT: Start your response with { and end with }. No markdown backticks, no explanations before or after the JSON.\n");
         
-        return prompt.toString();
+        String finalPrompt = prompt.toString();
+        logger.debug("Prompt building completed for '{}', final length: {} characters", sourceHeader, finalPrompt.length());
+        return finalPrompt;
     }
     
 
@@ -301,10 +330,12 @@ public abstract class AbstractAIProvider implements AIProvider {
     private ColumnMatchingResult parseSingleColumnResponse(String response, String sourceHeader) throws AIProviderException {
         try {
             logger.debug("Parsing single column response for '{}' of length: {}", sourceHeader, response.length());
+            logger.debug("Raw response content: {}", response.length() > 500 ? response.substring(0, 500) + "..." : response);
             
             // Extract JSON from the response content
             String jsonContent = extractSingleColumnJsonFromContent(response);
             logger.debug("Extracted JSON content of length: {}", jsonContent.length());
+            logger.debug("Extracted JSON content: {}", jsonContent);
             
             // Parse the JSON object
             JsonNode resultNode = objectMapper.readTree(jsonContent);
@@ -347,11 +378,14 @@ public abstract class AbstractAIProvider implements AIProvider {
      */
     private String extractSingleColumnJsonFromContent(String content) throws AIProviderException {
         logger.debug("Extracting single column JSON from response of length: {}", content.length());
+        logger.debug("Response content preview: {}", content.length() > 200 ? content.substring(0, 200) + "..." : content);
         
         // Look for JSON object in the response
         int startIndex = content.indexOf('{');
+        logger.debug("Found JSON start at index: {}", startIndex);
         
         if (startIndex == -1) {
+            logger.error("No JSON object start found in response");
             throw new AIProviderException("No JSON object start found in response. Response preview: " + 
                 (content.length() > 100 ? content.substring(0, 100) + "..." : content));
         }

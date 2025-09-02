@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.List;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for creating AI provider instances.
@@ -13,6 +15,7 @@ import java.util.ArrayList;
  */
 public class AIProviderFactory {
     
+    private static final Logger logger = LoggerFactory.getLogger(AIProviderFactory.class);
     private static final Map<String, AIProvider> providerCache = new HashMap<>();
     private static final Map<String, Class<? extends AIProvider>> providerClasses = new HashMap<>();
     
@@ -25,11 +28,20 @@ public class AIProviderFactory {
      * Discovers available AI providers using ServiceLoader
      */
     private static void discoverProviders() {
-        ServiceLoader<AIProvider> loader = ServiceLoader.load(AIProvider.class);
-        for (AIProvider provider : loader) {
-            String providerId = provider.getProviderId();
-            providerClasses.put(providerId, provider.getClass());
-            providerCache.put(providerId, provider);
+        logger.info("Starting AI provider discovery using ServiceLoader");
+        try {
+            ServiceLoader<AIProvider> loader = ServiceLoader.load(AIProvider.class);
+            int providerCount = 0;
+            for (AIProvider provider : loader) {
+                String providerId = provider.getProviderId();
+                providerClasses.put(providerId, provider.getClass());
+                providerCache.put(providerId, provider);
+                providerCount++;
+                logger.info("Discovered AI provider: {} (class: {})", providerId, provider.getClass().getSimpleName());
+            }
+            logger.info("AI provider discovery completed. Found {} providers: {}", providerCount, providerClasses.keySet());
+        } catch (Exception e) {
+            logger.error("Error during AI provider discovery", e);
         }
     }
     
@@ -44,7 +56,10 @@ public class AIProviderFactory {
     public static AIProvider createProvider(String providerId, ProviderConfiguration configuration) 
             throws AIProviderException {
         
+        logger.info("Creating AI provider: {} with configuration: {}", providerId, configuration);
+        
         if (providerId == null || providerId.trim().isEmpty()) {
+            logger.error("Provider ID cannot be null or empty");
             throw new AIProviderException("Provider ID cannot be null or empty");
         }
         
@@ -52,30 +67,41 @@ public class AIProviderFactory {
         if (providerCache.containsKey(providerId)) {
             AIProvider cachedProvider = providerCache.get(providerId);
             if (cachedProvider.isReady()) {
+                logger.info("Returning cached provider instance for: {}", providerId);
                 return cachedProvider;
+            } else {
+                logger.warn("Cached provider {} is not ready, creating new instance", providerId);
             }
         }
         
         // Try to create a new instance
         Class<? extends AIProvider> providerClass = providerClasses.get(providerId);
         if (providerClass == null) {
+            logger.error("Unknown provider ID: {}. Available providers: {}", providerId, providerClasses.keySet());
             throw new AIProviderException("Unknown provider ID: " + providerId);
         }
         
         try {
+            logger.debug("Instantiating provider class: {}", providerClass.getName());
             AIProvider provider = providerClass.getDeclaredConstructor().newInstance();
             
             // Validate configuration
             if (configuration != null) {
+                logger.debug("Validating configuration for provider: {}", providerId);
                 provider.validateConfiguration(configuration);
+                logger.info("Configuration validation successful for provider: {}", providerId);
+            } else {
+                logger.warn("No configuration provided for provider: {}", providerId);
             }
             
             // Cache the provider
             providerCache.put(providerId, provider);
+            logger.info("Successfully created and cached provider: {}", providerId);
             
             return provider;
             
         } catch (Exception e) {
+            logger.error("Failed to create provider: {}", providerId, e);
             throw new AIProviderException("Failed to create provider: " + providerId, e);
         }
     }
@@ -86,6 +112,7 @@ public class AIProviderFactory {
      * @return List of available provider IDs
      */
     public static List<String> getAvailableProviders() {
+        logger.debug("Getting available providers: {}", providerClasses.keySet());
         return new ArrayList<>(providerClasses.keySet());
     }
     
@@ -96,7 +123,9 @@ public class AIProviderFactory {
      * @return true if the provider is available, false otherwise
      */
     public static boolean isProviderAvailable(String providerId) {
-        return providerClasses.containsKey(providerId);
+        boolean available = providerClasses.containsKey(providerId);
+        logger.debug("Provider {} availability: {}", providerId, available);
+        return available;
     }
     
     /**
@@ -106,14 +135,18 @@ public class AIProviderFactory {
      * @return The provider class, or null if not found
      */
     public static Class<? extends AIProvider> getProviderClass(String providerId) {
-        return providerClasses.get(providerId);
+        Class<? extends AIProvider> providerClass = providerClasses.get(providerId);
+        logger.debug("Provider class for {}: {}", providerId, providerClass != null ? providerClass.getName() : "null");
+        return providerClass;
     }
     
     /**
      * Clears the provider cache
      */
     public static void clearCache() {
+        logger.info("Clearing provider cache. Current cache size: {}", providerCache.size());
         providerCache.clear();
+        logger.info("Provider cache cleared");
     }
     
     /**
@@ -122,7 +155,13 @@ public class AIProviderFactory {
      * @param providerId The provider ID to remove from cache
      */
     public static void removeFromCache(String providerId) {
-        providerCache.remove(providerId);
+        logger.info("Removing provider {} from cache", providerId);
+        AIProvider removed = providerCache.remove(providerId);
+        if (removed != null) {
+            logger.info("Successfully removed provider {} from cache", providerId);
+        } else {
+            logger.warn("Provider {} was not found in cache", providerId);
+        }
     }
     
     /**
@@ -132,8 +171,10 @@ public class AIProviderFactory {
      * @param providerClass The provider class
      */
     public static void registerProvider(String providerId, Class<? extends AIProvider> providerClass) {
+        logger.info("Manually registering provider: {} with class: {}", providerId, providerClass.getName());
         providerClasses.put(providerId, providerClass);
         // Remove from cache to force recreation
         providerCache.remove(providerId);
+        logger.info("Provider {} registered and removed from cache", providerId);
     }
 }

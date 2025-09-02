@@ -1,14 +1,20 @@
 package com.example.plugins.aiintelligence.domain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a mapping between a source column and a target column.
  * This class encapsulates known good mappings that serve as training data for the AI matching process.
  */
 public class ColumnMapping {
     
+    private static final Logger logger = LoggerFactory.getLogger(ColumnMapping.class);
+    
     private String targetColumn;
     private String sourceColumn;
     private String mappingContext;
+    private Boolean valid;
     
     /**
      * Default constructor for JSON deserialization
@@ -25,6 +31,7 @@ public class ColumnMapping {
     public ColumnMapping(String targetColumn, String sourceColumn) {
         this.targetColumn = targetColumn;
         this.sourceColumn = sourceColumn;
+        logger.debug("Created ColumnMapping: {} -> {}", sourceColumn, targetColumn);
     }
     
     /**
@@ -38,6 +45,7 @@ public class ColumnMapping {
         this.targetColumn = targetColumn;
         this.sourceColumn = sourceColumn;
         this.mappingContext = mappingContext;
+        logger.debug("Created ColumnMapping with context: {} -> {} ({})", sourceColumn, targetColumn, mappingContext);
     }
     
     // Getters and Setters
@@ -66,6 +74,14 @@ public class ColumnMapping {
         this.mappingContext = mappingContext;
     }
     
+    public Boolean getValid() {
+        return valid;
+    }
+    
+    public void setValid(Boolean valid) {
+        this.valid = valid;
+    }
+    
     @Override
     public String toString() {
         return String.format("ColumnMapping{targetColumn='%s', sourceColumn='%s', mappingContext='%s'}", 
@@ -78,8 +94,16 @@ public class ColumnMapping {
      * @return true if valid, false otherwise
      */
     public boolean isValid() {
-        return targetColumn != null && !targetColumn.trim().isEmpty() &&
-               sourceColumn != null && !sourceColumn.trim().isEmpty();
+        boolean isValid = targetColumn != null && !targetColumn.trim().isEmpty() &&
+               sourceColumn != null && !sourceColumn.trim().isEmpty() &&
+               (valid == null || valid); // Consider valid if not set or explicitly true
+        
+        if (!isValid) {
+            logger.debug("ColumnMapping validation failed: targetColumn='{}', sourceColumn='{}', valid={}", 
+                        targetColumn, sourceColumn, valid);
+        }
+        
+        return isValid;
     }
     
     /**

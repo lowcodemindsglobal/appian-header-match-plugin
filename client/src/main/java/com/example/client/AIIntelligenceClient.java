@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Simple console client for testing AI Intelligence Plugin
@@ -19,6 +21,8 @@ public class AIIntelligenceClient {
     
     private AIIntelligenceService aiService;
     private ClientConfiguration config;
+    private ObjectMapper objectMapper = new ObjectMapper()
+            .configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     
     public static void main(String[] args) {
         AIIntelligenceClient client = new AIIntelligenceClient();
@@ -62,16 +66,40 @@ public class AIIntelligenceClient {
     private void initializePlugin() {
         aiService = new AIIntelligenceService();
         
-        // Configure OpenAI provider
-        aiService.setProviderId("openai");
-        aiService.setProviderName("OpenAI");  // Add provider name for validation
-        aiService.setModelId("gpt-4");
+        // Check if we should use AWS Bedrock or OpenAI
+        String provider = System.getenv("AI_PROVIDER");
+        if (provider == null || provider.isEmpty()) {
+            provider = "openai"; // Default to OpenAI
+        }
         
-        // Set provider parameters (OpenAI API key will be set via environment variable)
-        String[] providerKeys = {"apiKey"};
-        String[] providerValues = {System.getenv("OPENAI_API_KEY")};
-        aiService.setProviderParameterKeys(providerKeys);
-        aiService.setProviderParameterValues(providerValues);
+        if ("aws-bedrock".equalsIgnoreCase(provider)) {
+            // Configure AWS Bedrock provider
+            aiService.setProviderId("aws-bedrock");
+            aiService.setProviderName("AWS Bedrock");
+            aiService.setModelId("arn:aws:bedrock:us-west-2:211125498297:application-inference-profile/hx2e1juc8tej");
+            
+            // Set AWS provider parameters
+            String[] providerKeys = {"region", "accessKeyId", "secretAccessKey"};
+            String[] providerValues = {
+                System.getenv("AWS_DEFAULT_REGION") != null ? System.getenv("AWS_DEFAULT_REGION") : "us-west-2",
+                System.getenv("AWS_ACCESS_KEY_ID"),
+                System.getenv("AWS_SECRET_ACCESS_KEY")
+            };
+            aiService.setProviderParameterKeys(providerKeys);
+            aiService.setProviderParameterValues(providerValues);
+            
+        } else {
+            // Configure OpenAI provider (default)
+            aiService.setProviderId("openai");
+            aiService.setProviderName("OpenAI");
+            aiService.setModelId("gpt-4");
+            
+            // Set provider parameters (OpenAI API key will be set via environment variable)
+            String[] providerKeys = {"apiKey"};
+            String[] providerValues = {System.getenv("OPENAI_API_KEY")};
+            aiService.setProviderParameterKeys(providerKeys);
+            aiService.setProviderParameterValues(providerValues);
+        }
         
         // Set model parameters
         aiService.setTemperature(0.3);
@@ -83,9 +111,19 @@ public class AIIntelligenceClient {
     }
     
     private void printConfiguration() {
-        System.out.println("🔧 Configuration:");
-        System.out.println("  Provider: OpenAI");
-        System.out.println("  Model: GPT-4");
+        System.out.println("�� Configuration:");
+        
+        // Determine which provider is being used based on environment variable
+        String provider = System.getenv("AI_PROVIDER");
+        if ("aws-bedrock".equalsIgnoreCase(provider)) {
+            System.out.println("  Provider: AWS Bedrock");
+            System.out.println("  Model: Application Inference Profile (Llama 4 Scout 17B)");
+            System.out.println("  ARN: arn:aws:bedrock:us-west-2:211125498297:application-inference-profile/hx2e1juc8tej");
+        } else {
+            System.out.println("  Provider: OpenAI");
+            System.out.println("  Model: GPT-4");
+        }
+        
         System.out.println("  Temperature: 0.3");
         System.out.println("  Max Tokens: 1000");
         System.out.println("  Standard Headers: " + config.getStandardHeadersFile());
@@ -107,17 +145,22 @@ public class AIIntelligenceClient {
             // Set service inputs
             aiService.setTargetHeaders(targetHeaders);
             aiService.setSourceHeaders(sourceHeaders);
-            aiService.setExistingMappings(existingMappings.toArray(new ColumnMapping[0]));
+            
+            // Convert existing mappings to JSON string
+            String existingMappingsJson = objectMapper.writeValueAsString(existingMappings);
+            aiService.setExistingMappingsJson(existingMappingsJson);
+            
             aiService.setIndustryContext("Financial Services - SIBS Integration");
             
             // Execute the service
             aiService.run();
             
             // Get results
-            ColumnMatchingResult[] results = aiService.getColumnMatchingResults();
+            String resultsJson = aiService.getColumnMatchingResultsJson();
+            List<ColumnMatchingResult> results = objectMapper.readValue(resultsJson, new TypeReference<List<ColumnMatchingResult>>() {});
             
             // Display results
-            displayResults(results);
+            displayResults(results.toArray(new ColumnMatchingResult[0]));
             
         } catch (Exception e) {
             System.err.println("ERROR: Error during column matching: " + e.getMessage());

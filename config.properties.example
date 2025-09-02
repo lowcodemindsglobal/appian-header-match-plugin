@@ -24,9 +24,9 @@ plugin.target.dir=target
 
 # API Keys (REQUIRED - fill in your actual values)
 openai.api.key=your_openai_api_key_here
-aws.access.key.id=your_aws_access_key_here
-aws.secret.access.key=your_aws_secret_key_here
-aws.default.region=us-west-2
+aws.accessKeyId=your_aws_access_key_here
+aws.secretAccessKey=your_aws_secret_key_here
+aws.region=us-west-2
 
 # AI Model Configuration
 default.model.id=gpt-4
