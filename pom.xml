@@ -29,7 +29,7 @@
             <artifactId>appian-plug-in-sdk</artifactId>
             <version>23.3.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/appian-plugin-sdk-23.3.jar</systemPath>
+            <systemPath>${project.basedir}/lib/appian-plug-in-sdk.jar</systemPath>
         </dependency>
 
         <!-- AWS Bedrock SDK (for AWS provider) -->
