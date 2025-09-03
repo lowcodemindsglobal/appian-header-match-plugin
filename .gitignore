@@ -41,7 +41,6 @@ logs/
 # Build outputs
 client/target/
 target/
-*.jar
 *.war
 *.ear
 
