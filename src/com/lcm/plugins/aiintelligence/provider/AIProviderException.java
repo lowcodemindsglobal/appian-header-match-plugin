@@ -1,4 +1,4 @@
-package com.example.plugins.aiintelligence.provider;
+package com.lcm.plugins.aiintelligence.provider;
 
 /**
  * Exception thrown when errors occur in AI provider operations.

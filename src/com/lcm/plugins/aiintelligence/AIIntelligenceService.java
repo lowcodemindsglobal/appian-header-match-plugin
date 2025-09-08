@@ -1,4 +1,4 @@
-package com.example.plugins.aiintelligence;
+package com.lcm.plugins.aiintelligence;
 
 import com.appiancorp.suiteapi.process.exceptions.SmartServiceException;
 import com.appiancorp.suiteapi.process.framework.AppianSmartService;
@@ -6,8 +6,8 @@ import com.appiancorp.suiteapi.process.framework.Input;
 import com.appiancorp.suiteapi.process.framework.Required;
 import com.appiancorp.suiteapi.process.palette.PaletteInfo;
 
-import com.example.plugins.aiintelligence.provider.*;
-import com.example.plugins.aiintelligence.domain.*;
+import com.lcm.plugins.aiintelligence.provider.*;
+import com.lcm.plugins.aiintelligence.domain.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

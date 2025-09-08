@@ -1,4 +1,4 @@
-package com.example.plugins.aiintelligence.domain;
+package com.lcm.plugins.aiintelligence.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,11 +1,11 @@
-<appian-plugin name="AI Intelligence Plugin" key="com.example.plugins.aiintelligence">
+<appian-plugin name="AI Intelligence Plugin" key="com.lcm.plugins.aiintelligence">
     <plugin-info>
         <description>Smart Service Plugin for intelligent column header matching using configurable AI providers</description>
-        <vendor name="Example" url="https://example.com"/>
+        <vendor name="LOWCODEMINDS" url="https://www.lowcodeminds.com/"/>
         <version>1.0.0</version>
         <application-version min="23.1" />
     </plugin-info>
 
     <!--  Smart Services  -->
-    <smart-service name="AI Intelligence Service" key="aiintelligence_v2" class="com.example.plugins.aiintelligence.AIIntelligenceService" />
+    <smart-service name="AI Intelligence Service" key="aiintelligence_v2" class="com.lcm.plugins.aiintelligence.AIIntelligenceService" />
 </appian-plugin>

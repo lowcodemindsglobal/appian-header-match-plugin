@@ -1,4 +1,4 @@
-package com.example.plugins.aiintelligence.provider;
+package com.lcm.plugins.aiintelligence.provider;
 
 import java.util.HashMap;
 import java.util.Map;

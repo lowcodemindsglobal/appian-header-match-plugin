@@ -1,7 +1,7 @@
-package com.example.plugins.aiintelligence.provider;
+package com.lcm.plugins.aiintelligence.provider;
 
-import com.example.plugins.aiintelligence.domain.ColumnMatchingResult;
-import com.example.plugins.aiintelligence.domain.ColumnMapping;
+import com.lcm.plugins.aiintelligence.domain.ColumnMatchingResult;
+import com.lcm.plugins.aiintelligence.domain.ColumnMapping;
 
 import java.util.List;
 

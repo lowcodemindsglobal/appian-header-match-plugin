@@ -1,4 +1,4 @@
-package com.example.plugins.aiintelligence.util;
+package com.lcm.plugins.aiintelligence.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;

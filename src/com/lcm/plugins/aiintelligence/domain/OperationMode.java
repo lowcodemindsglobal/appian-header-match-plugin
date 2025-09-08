@@ -1,4 +1,4 @@
-package com.example.plugins.aiintelligence.domain;
+package com.lcm.plugins.aiintelligence.domain;
 
 /**
  * Enumeration defining the operation mode for the AI Intelligence service.
