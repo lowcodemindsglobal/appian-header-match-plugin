@@ -19,43 +19,81 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <aws.sdk.version>2.28.0</aws.sdk.version>
         <openai.version>0.18.2</openai.version>
-        <jackson.version>2.17.0</jackson.version>
+        <jackson.version>2.17.2</jackson.version>
         <slf4j.version>2.0.12</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <appian.sdk.path>lib/appian-plug-in-sdk.jar</appian.sdk.path>
+        <!-- BOM versions -->
+        <netty.version>4.1.114.Final</netty.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <!-- Latest stable versions -->
+        <guava.version>33.3.1-jre</guava.version>
+        <commons-io.version>2.16.1</commons-io.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <commons-compress.version>1.27.1</commons-compress.version>
+        <bcpkix.version>1.78.1</bcpkix.version>
+        <okio.version>3.9.0</okio.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Netty BOM to force secure Netty versions -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- Jackson BOM to align all Jackson artifacts -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- OkHttp BOM to control transitive OkHttp versions -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-bom</artifactId>
+                <version>${okhttp.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- Direct dependency management for other libraries -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.3.1-jre</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup.okio</groupId>
-                <artifactId>okio</artifactId>
-                <version>3.9.0</version>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.16.1</version>
+                <version>${commons-io.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.14.0</version>
+                <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.27.1</version>
+                <version>${commons-compress.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpkix-jdk18on</artifactId>
-                <version>1.78.1</version>
+                <version>${bcpkix.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>${okio.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -100,7 +138,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
 
         <!-- Logging (provided by Appian) -->
@@ -148,6 +185,7 @@
                     </execution>
                 </executions>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -162,6 +200,41 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.2</version>
+            </plugin>
+            
+            <!-- Maven Enforcer Plugin to prevent vulnerable dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-dependency-convergence</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence>
+                                    <message>Dependency convergence detected for ${project.groupId}:${project.artifactId}. Paths to dependency (limited to 5): ${convergencePaths}</message>
+                                </dependencyConvergence>
+                                <banTransitiveDependencies>
+                                    <message>Transitive dependencies are not allowed. Please explicitly declare all dependencies.</message>
+                                </banTransitiveDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- Versions Plugin for dependency updates -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.17.0</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
             </plugin>
             
             <!-- Maven Shade Plugin to create fat JAR with all dependencies -->
