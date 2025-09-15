@@ -17,35 +17,24 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aws.sdk.version>2.28.0</aws.sdk.version>
+        <aws.sdk.version>2.29.39</aws.sdk.version>
         <openai.version>0.18.2</openai.version>
-        <jackson.version>2.17.2</jackson.version>
-        <slf4j.version>2.0.12</slf4j.version>
-        <junit.version>4.13.2</junit.version>
+        <jackson.version>2.18.2</jackson.version>
+        <slf4j.version>2.0.16</slf4j.version>
         <appian.sdk.path>lib/appian-plug-in-sdk.jar</appian.sdk.path>
         <!-- BOM versions -->
-        <netty.version>4.1.114.Final</netty.version>
         <okhttp.version>4.12.0</okhttp.version>
         <!-- Latest stable versions -->
-        <guava.version>33.3.1-jre</guava.version>
-        <commons-io.version>2.16.1</commons-io.version>
-        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <guava.version>33.4.0-jre</guava.version>
+        <commons-io.version>2.18.0</commons-io.version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
         <commons-compress.version>1.27.1</commons-compress.version>
-        <bcpkix.version>1.78.1</bcpkix.version>
-        <okio.version>3.9.0</okio.version>
+        <bcpkix.version>1.79.0</bcpkix.version>
+        <okio.version>3.9.1</okio.version>
     </properties>
 
     <dependencyManagement>
-        <dependencies>
-            <!-- Netty BOM to force secure Netty versions -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>${netty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            
+        <dependencies>            
             <!-- Jackson BOM to align all Jackson artifacts -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
@@ -113,17 +102,90 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>bedrock</artifactId>
             <version>${aws.sdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>bedrockruntime</artifactId>
             <version>${aws.sdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>aws-core</artifactId>
+            <version>${aws.sdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Add the Apache HTTP client for AWS SDK v2 -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>apache-client</artifactId>
             <version>${aws.sdk.version}</version>
         </dependency>
 
@@ -132,12 +194,57 @@
             <groupId>com.theokanning.openai-gpt3-java</groupId>
             <artifactId>service</artifactId>
             <version>${openai.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.testng</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.tomakehurst</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.squareup.okhttp3</groupId>
+                    <artifactId>okhttp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.squareup.okio</groupId>
+                    <artifactId>okio</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- OkHttp (explicit dependency to use BOM version) -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
         </dependency>
 
         <!-- JSON Processing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- Logging (provided by Appian) -->
@@ -146,14 +253,6 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- Testing -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -209,19 +308,28 @@
                 <version>3.6.0</version>
                 <executions>
                     <execution>
-                        <id>enforce-dependency-convergence</id>
+                        <id>enforce</id>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
                         <configuration>
                             <rules>
-                                <dependencyConvergence>
-                                    <message>Dependency convergence detected for ${project.groupId}:${project.artifactId}. Paths to dependency (limited to 5): ${convergencePaths}</message>
-                                </dependencyConvergence>
-                                <banTransitiveDependencies>
-                                    <message>Transitive dependencies are not allowed. Please explicitly declare all dependencies.</message>
-                                </banTransitiveDependencies>
+                                <requireUpperBoundDeps/>
+                                <banDuplicateClasses/>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>io.netty:*</exclude>
+                                        <exclude>org.eclipse.jetty:*</exclude>
+                                        <exclude>log4j:log4j:*</exclude>
+                                        <exclude>org.apache.logging.log4j:log4j:1.*</exclude>
+                                        <exclude>junit:junit:4.*</exclude>
+                                        <exclude>org.openjdk.jmh:*:*</exclude>
+                                        <exclude>org.openjdk.jol:*:*</exclude>
+                                        <exclude>org.graalvm.nativeimage:*:*</exclude>
+                                    </excludes>
+                                </bannedDependencies>
                             </rules>
+                            <fail>true</fail>
                         </configuration>
                     </execution>
                 </executions>
@@ -234,6 +342,23 @@
                 <version>2.17.0</version>
                 <configuration>
                     <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
+            
+            <!-- OWASP Dependency Check Plugin -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>10.0.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failBuildOnCVSS>7.0</failBuildOnCVSS>
                 </configuration>
             </plugin>
             
@@ -274,4 +399,53 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>security-scan</id>
+            <build>
+            <plugins>
+                <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>9.0.9</version>
+                <configuration>
+                    <failBuildOnCVSS>0</failBuildOnCVSS>
+                    <formats>JSON,HTML</formats>
+                </configuration>
+                </plugin>
+                <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+                <version>2.7.10</version>
+                <executions>
+                    <execution>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>makeAggregateBom</goal>
+                    </goals>
+                    <configuration>
+                        <schemaVersion>1.5</schemaVersion>
+                        <outputFormat>json</outputFormat>
+                    </configuration>
+                    </execution>
+                </executions>
+                </plugin>
+                <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.1.0</version>
+                <executions>
+                    <execution>
+                    <id>add-third-party</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>aggregate-add-third-party</goal>
+                    </goals>
+                    </execution>
+                </executions>
+                </plugin>
+            </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
