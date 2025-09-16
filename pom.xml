@@ -210,51 +210,6 @@
             <version>${aws.sdk.version}</version>
         </dependency>
 
-        <!-- OpenAI SDK (for OpenAI provider) -->
-        <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>service</artifactId>
-            <version>${openai.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.testng</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.github.tomakehurst</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.squareup.okhttp3</groupId>
-                    <artifactId>okhttp</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.squareup.okio</groupId>
-                    <artifactId>okio</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- OkHttp (explicit dependency to use BOM version) -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -337,8 +292,13 @@
                             <rules>
                                 <requireUpperBoundDeps/>
                                 <bannedDependencies>
+                                    <searchTransitive>true</searchTransitive>
                                     <excludes>
+                                        <exclude>commons-lang:commons-lang</exclude>
                                         <exclude>io.netty:*</exclude>
+                                        <exclude>io.github.classgraph:classgraph</exclude>
+                                        <exclude>com.github.tomakehurst:wiremock-jre8</exclude>
+                                        <exclude>org.reactivestreams:reactive-streams-tck</exclude>
                                         <exclude>org.eclipse.jetty:*</exclude>
                                         <exclude>log4j:log4j:*</exclude>
                                         <exclude>org.apache.logging.log4j:log4j:1.*</exclude>
@@ -346,6 +306,7 @@
                                         <exclude>org.openjdk.jmh:*:*</exclude>
                                         <exclude>org.openjdk.jol:*:*</exclude>
                                         <exclude>org.graalvm.nativeimage:*:*</exclude>
+                                        <exclude>javax.measure:jsr-275</exclude>
                                     </excludes>
                                 </bannedDependencies>
                             </rules>
