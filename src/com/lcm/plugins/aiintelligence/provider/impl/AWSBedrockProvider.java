@@ -15,7 +15,7 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
+import software.amazon.awssdk.http.urlconnection.UrlConnectionHttpClient;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.util.Properties;
@@ -321,7 +321,7 @@ public class AWSBedrockProvider extends AbstractAIProvider {
             logger.debug("Building AWS Bedrock client with region: {}", region);
             var clientBuilder = BedrockRuntimeClient.builder()
                 .region(Region.of(region))
-                .httpClientBuilder(ApacheHttpClient.builder());
+                .httpClientBuilder(UrlConnectionHttpClient.builder());
             
             // Add credentials if provided
             if (accessKeyId != null && secretAccessKey != null) {

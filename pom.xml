@@ -7,7 +7,7 @@
 
     <groupId>com.lcm.plugins</groupId>
     <artifactId>ai-intelligence-plugin</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.4</version>
     <packaging>jar</packaging>
 
     <name>AI Intelligence Plugin</name>
@@ -21,16 +21,6 @@
         <openai.version>0.18.2</openai.version>
         <jackson.version>2.18.2</jackson.version>
         <slf4j.version>2.0.16</slf4j.version>
-        <appian.sdk.path>lib/appian-plug-in-sdk.jar</appian.sdk.path>
-        <!-- BOM versions -->
-        <okhttp.version>4.12.0</okhttp.version>
-        <!-- Latest stable versions -->
-        <guava.version>33.4.0-jre</guava.version>
-        <commons-io.version>2.18.0</commons-io.version>
-        <commons-lang3.version>3.17.0</commons-lang3.version>
-        <commons-compress.version>1.27.1</commons-compress.version>
-        <bcpkix.version>1.79.0</bcpkix.version>
-        <okio.version>3.9.1</okio.version>
     </properties>
 
     <dependencyManagement>
@@ -44,67 +34,6 @@
                 <scope>import</scope>
             </dependency>
             
-            <!-- OkHttp BOM to control transitive OkHttp versions -->
-            <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>okhttp-bom</artifactId>
-                <version>${okhttp.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            
-            <!-- Direct dependency management for other libraries -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-compress</artifactId>
-                <version>${commons-compress.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcpkix-jdk18on</artifactId>
-                <version>${bcpkix.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.squareup.okio</groupId>
-                <artifactId>okio</artifactId>
-                <version>${okio.version}</version>
-            </dependency>
-            <!-- Kotlin dependencies - required transitively by OkHttp, but not used directly in this plugin -->
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib</artifactId>
-                <version>1.9.25</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib-jdk7</artifactId>
-                <version>1.9.25</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib-jdk8</artifactId>
-                <version>1.9.25</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.9.25</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -114,8 +43,7 @@
             <groupId>com.appiancorp</groupId>
             <artifactId>appian-plug-in-sdk</artifactId>
             <version>23.3.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/appian-plug-in-sdk.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
 
         <!-- AWS Bedrock SDK (for AWS provider) -->
@@ -143,6 +71,18 @@
                 <exclusion>
                     <groupId>junit</groupId>
                     <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>apache-client</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -172,6 +112,18 @@
                     <groupId>junit</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>apache-client</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -200,20 +152,26 @@
                     <groupId>junit</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>apache-client</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
-        <!-- Add the Apache HTTP client for AWS SDK v2 -->
+        <!-- Add the URL connection client for AWS SDK v2 -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
-            <artifactId>apache-client</artifactId>
+            <artifactId>url-connection-client</artifactId>
             <version>${aws.sdk.version}</version>
-        </dependency>
-
-        <!-- OkHttp (explicit dependency to use BOM version) -->
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
         </dependency>
 
         <!-- JSON Processing -->
@@ -343,7 +301,7 @@
                 </configuration>
             </plugin>
             
-            <!-- Maven Shade Plugin to create fat JAR with all dependencies -->
+            <!-- Maven Shade Plugin to create separate shaded JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -355,23 +313,23 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shaded</shadedClassifierName>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <!-- Exclude dependencies that are provided by Appian -->
                             <artifactSet>
                                 <excludes>
                                     <exclude>org.slf4j:*</exclude>
                                     <exclude>ch.qos.logback:*</exclude>
                                     <exclude>org.apache.logging.log4j:*</exclude>
+                                    <!-- belt & suspenders: keep AppMarket "no-no's" out even if added later -->
+                                    <exclude>log4j:log4j</exclude>
+                                    <exclude>commons-lang:commons-lang</exclude>
+                                    <exclude>org.reactivestreams:reactive-streams-tck</exclude>
+                                    <exclude>com.github.tomakehurst:wiremock-jre8</exclude>
+                                    <exclude>org.eclipse.jetty:*</exclude>
+                                    <exclude>org.openjdk.jmh:*</exclude>
+                                    <exclude>org.openjdk.jol:*</exclude>
+                                    <exclude>io.github.classgraph:classgraph</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>
@@ -386,18 +344,9 @@
             <build>
             <plugins>
                 <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>9.0.9</version>
-                <configuration>
-                    <failBuildOnCVSS>0</failBuildOnCVSS>
-                    <formats>JSON,HTML</formats>
-                </configuration>
-                </plugin>
-                <plugin>
                 <groupId>org.cyclonedx</groupId>
                 <artifactId>cyclonedx-maven-plugin</artifactId>
-                <version>2.7.10</version>
+                <version>2.9.1</version>
                 <executions>
                     <execution>
                     <phase>verify</phase>
