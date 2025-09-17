@@ -4,18 +4,17 @@ A configurable, LLM-agnostic Appian plugin for intelligent column header matchin
 
 ## 🚀 **Current Status: Production Ready**
 
-**✅ Latest Updates (v1.0.0):**
-- **OpenAI Integration**: Fully functional with 2-minute timeout support
+**✅ Latest Updates (v1.0.4):**
+- **AWS Bedrock Integration**: Fully functional with Claude models
 - **Robust JSON Parsing**: Handles truncated responses gracefully
-- **Timeout Optimization**: Resolved network timeout issues for complex operations
 - **Production Testing**: Successfully tested with real CSV data and column matching
+- **Enterprise Architecture**: Built with production-grade design patterns
 
 ## Overview
 
 This plugin provides a flexible, extensible architecture for AI-powered column header matching that can work with multiple AI providers including:
-- **OpenAI** ✅ (Fully tested and working)
-- **AWS Bedrock** ✅ (Ready for production)
-- **Appian LL** (future)
+- **AWS Bedrock** ✅ (Fully implemented with Claude models)
+- **OpenAI** 🚧 (Planned for future release)
 - **Any other AI service** (easily extensible)
 
 ## Architecture
@@ -59,74 +58,65 @@ The plugin uses several software engineering design patterns to achieve LLM-agno
 8. **Resilient**: Handles network issues and truncated responses gracefully
 9. **Configurable**: Centralized configuration management with environment variable support
 
-## Recent Improvements (v1.0.0)
+## Recent Improvements (v1.0.4)
 
-### 🔧 **Timeout Optimization**
-- **OpenAI Provider**: Extended timeout to 2 minutes for complex column matching operations
-- **Network Resilience**: Handles slow network conditions and large AI processing requests
-- **User Experience**: No more timeout errors during complex operations
+### 🏗️ **Enterprise Architecture**
+- **AWS Bedrock Integration**: Full implementation with Claude models
+- **Design Patterns**: Strategy, Factory, and Template Method patterns implemented
+- **Service Loader**: Automatic provider discovery mechanism
+- **Configuration Management**: Flexible provider configuration system
 
-### 🔐 **Security Improvements**
-- **Removed Hardcoded API Keys**: No more hardcoded credentials in scripts
-- **Configuration-Based Setup**: API keys now loaded from `config.properties` or environment variables
-- **Template Configuration**: Added `config.properties.example` for easy setup
-- **Git Security**: `.gitignore` already excludes sensitive configuration files
+### 🔐 **Security & Reliability**
+- **Credential Management**: Secure handling of AWS credentials
+- **Input Validation**: Comprehensive parameter validation
+- **Error Handling**: Robust exception handling with user-friendly messages
+- **Logging**: Detailed logging for debugging and monitoring
 
 ### 🛡️ **Robust JSON Parsing**
 - **Truncated Response Handling**: Automatically handles responses that get cut off
 - **Fallback Mechanisms**: Parses partial results when complete JSON is unavailable
 - **Error Recovery**: Gracefully handles malformed or incomplete AI responses
 
-### 🧪 **Enhanced Testing & Validation**
-- **Comprehensive Testing**: Full end-to-end testing with real CSV data
-- **Error Simulation**: Tested with various error conditions and edge cases
-- **Performance Validation**: Verified timeout settings and response handling
-
-### ⚙️ **Configuration System**
-- **Centralized Configuration**: Single `config.properties` file for all settings
-- **Environment Variable Support**: Flexible configuration via environment variables
-- **Cross-Platform Paths**: Robust file path handling across operating systems
-- **Build Integration**: Seamless integration with Maven build process
+### ⚙️ **Provider Architecture**
+- **Modular Design**: Clean separation between providers and business logic
+- **Extensible Framework**: Easy addition of new AI providers
+- **Configuration-Driven**: No hardcoded provider dependencies
+- **Production Ready**: Built for enterprise deployment
 
 ## Project Structure
 
 ```
-appian-header-match-plugin/                    # Root project directory
-├── src/main/java/com/example/plugins/aiintelligence/
-│   ├── domain/                          # Domain models
-│   │   ├── ColumnMapping.java           # Column mapping entity
-│   │   ├── ColumnMatchingResult.java    # Matching result entity
-│   │   └── OperationMode.java           # Operation modes enum
-│   ├── provider/                        # AI provider abstraction
-│   │   ├── AIProvider.java              # Provider interface
-│   │   ├── AbstractAIProvider.java      # Abstract base class
-│   │   ├── AIProviderFactory.java       # Provider factory
-│   │   ├── AIProviderException.java     # Custom exceptions
-│   │   ├── ModelConfiguration.java      # Model configuration
-│   │   ├── ProviderConfiguration.java   # Provider configuration
-│   │   └── impl/                        # Provider implementations
-│   │       ├── AWSBedrockProvider.java  # AWS Bedrock implementation
-│   │       └── OpenAIProvider.java      # OpenAI implementation (with timeout fixes)
-│   ├── util/                            # Utility classes
-│   │   └── ConfigurationLoader.java     # Configuration loading utilities
-│   └── AIIntelligenceService.java       # Main Appian service
-├── src/main/resources/
-│   ├── appian-plugin.xml                # Appian plugin configuration
-│   └── META-INF/services/               # Service loader configuration
-├── client/                              # Test client for development
-│   ├── src/main/java/                   # Test client source code
-│   ├── data/input/                      # Sample CSV files for testing
-│   │   ├── sibs.csv                     # Standard SIBS headers
-│   │   ├── VS - OCC Extract MAS -NEW.csv # Buy sheet headers
-│   │   └── VSI mapping.csv              # VSI mapping data
-│   └── pom.xml                          # Maven configuration
-├── lib/                                 # Appian SDK and dependencies
+appian-header-match-plugin/              # Root project directory
+├── src/                                 # Source code directory
+│   ├── com/lcm/plugins/aiintelligence/  # Main package
+│   │   ├── domain/                      # Domain models
+│   │   │   ├── ColumnMapping.java       # Column mapping entity
+│   │   │   ├── ColumnMatchingResult.java # Matching result entity
+│   │   │   └── OperationMode.java       # Operation modes enum
+│   │   ├── provider/                    # AI provider abstraction
+│   │   │   ├── AIProvider.java          # Provider interface
+│   │   │   ├── AbstractAIProvider.java  # Abstract base class
+│   │   │   ├── AIProviderFactory.java   # Provider factory
+│   │   │   ├── AIProviderException.java # Custom exceptions
+│   │   │   ├── ModelConfiguration.java  # Model configuration
+│   │   │   ├── ProviderConfiguration.java # Provider configuration
+│   │   │   └── impl/                    # Provider implementations
+│   │   │       └── AWSBedrockProvider.java # AWS Bedrock implementation
+│   │   ├── util/                        # Utility classes
+│   │   │   └── ConfigurationLoader.java # Configuration loading utilities
+│   │   └── AIIntelligenceService.java   # Main Appian service
+│   ├── main/resources/                  # Resources directory
+│   │   └── com/lcm/plugins/aiintelligence/
+│   │       └── aiintelligence.properties # Configuration properties
+│   ├── META-INF/                        # Metadata directory
+│   │   ├── lib/                         # Library directory
+│   │   └── services/                    # Service loader configuration
+│   └── appian-plugin.xml                # Appian plugin configuration
+├── doc/                                 # Documentation
+│   └── ArchitectureDiagrams.md          # Architecture documentation
+├── lib/                                 # Dependencies
 │   └── appian-plug-in-sdk.jar          # Appian Plugin SDK
-├── config.properties                    # Central configuration file
-├── build-plugin-and-client.bat          # Build script for Windows
-├── test-client.bat                      # Test script for Windows
-├── CONFIGURATION.md                     # Configuration documentation
-├── .gitignore                           # Git ignore rules
+├── README.md                            # Project documentation
 └── pom.xml                              # Maven configuration
 ```
 
@@ -135,9 +125,9 @@ appian-header-match-plugin/                    # Root project directory
 ### Prerequisites
 
 1. **Appian Environment**: Appian 23.1 or later
-2. **Java Runtime**: Java 11 or later
-3. **Plugin JAR**: The compiled `ai-intelligence-plugin-1.0.0.jar` file
-4. **AI Provider Credentials**: API keys and credentials for your chosen AI provider
+2. **Java Runtime**: Java 17 or later
+3. **Plugin JAR**: The compiled `ai-intelligence-plugin-1.0.4.jar` file
+4. **AWS Credentials**: AWS access keys and appropriate Bedrock permissions
 
 ### Installation Steps
 
@@ -149,7 +139,7 @@ appian-header-match-plugin/                    # Root project directory
 
 2. **Upload Plugin JAR**
    - Click **Upload Plugin**
-   - Select the `ai-intelligence-plugin-1.0.0.jar` file
+   - Select the `ai-intelligence-plugin-1.0.4.jar` file
    - Click **Upload**
 
 3. **Verify Installation**
@@ -173,17 +163,8 @@ appian-header-match-plugin/                    # Root project directory
      ai.provider.aws.secretAccessKey=YOUR_SECRET_KEY
      ```
 
-##### For OpenAI:
-1. **Get OpenAI API Key**
-   - Visit [OpenAI Platform](https://platform.openai.com/api-keys)
-   - Create a new API key
-
-2. **Configure OpenAI Credentials in Appian**
-   - Navigate to **Admin Console** → **System Properties**
-   - Add the following property:
-     ```
-     ai.provider.openai.apiKey=YOUR_OPENAI_API_KEY
-     ```
+##### For Future Providers:
+OpenAI and other providers will be supported in future releases. The architecture is designed to easily accommodate additional providers.
 
 #### Step 3: Configure Appian Process Model
 
@@ -196,33 +177,31 @@ appian-header-match-plugin/                    # Root project directory
    - Configure the service inputs (see Configuration section below)
 
 3. **Configure Service Inputs**
-   - Set the provider ID (e.g., "aws-bedrock" or "openai")
-   - Configure model parameters
+   - Set the provider ID (currently only "aws-bedrock" is supported)
+   - Configure model parameters for Claude models
    - Set up input data sources
 
 ## Usage
 
 ### Configuration Setup
 
-Before using the plugin, ensure your configuration is properly set up:
+Before using the plugin, configure your AWS credentials:
 
-1. **Copy Configuration Template**: 
-   ```bash
-   cp config.properties.example config.properties
-   ```
+1. **AWS Credentials**: Ensure you have valid AWS credentials with Bedrock access:
+   - AWS Access Key ID
+   - AWS Secret Access Key
+   - AWS Region (e.g., us-east-1)
 
-2. **Configure API Keys**: Edit `config.properties` and add your actual API keys:
-   - `openai.api.key`: Your OpenAI API key
-   - `aws.access.key.id`: Your AWS access key (if using AWS Bedrock)
-   - `aws.secret.access.key`: Your AWS secret key (if using AWS Bedrock)
+2. **Bedrock Permissions**: Your AWS credentials must have permissions to:
+   - Invoke Bedrock models (specifically Claude models)
+   - Access the Bedrock runtime service
 
-3. **Security Note**: Never commit `config.properties` to version control. The `.gitignore` file already excludes it.
+3. **Security Note**: Never hardcode credentials in your Appian process models. Use Appian system properties or environment variables.
 
-4. **Alternative**: You can also set the `OPENAI_API_KEY` environment variable instead of editing the config file.
-
-5. **Verify File Paths**: Ensure all referenced files exist and are accessible
-
-For detailed configuration information, see `CONFIGURATION.md`.
+4. **Supported Models**: Currently supports Claude models available through AWS Bedrock:
+   - anthropic.claude-3-sonnet-20240229-v1:0
+   - anthropic.claude-3-haiku-20240307-v1:0
+   - anthropic.claude-v2
 
 ### Basic Usage
 
@@ -246,37 +225,34 @@ Temperature: 0.3
 Max Tokens: 4000
 ```
 
-#### OpenAI Provider (Recommended)
+#### Currently Supported Provider: AWS Bedrock
 ```java
 // Provider Configuration
-Provider ID: "openai"
-Provider Parameter Keys: ["apiKey"]
-Provider Parameter Values: ["sk-..."]
+Provider ID: "aws-bedrock"
+Provider Parameter Keys: ["region", "accessKeyId", "secretAccessKey"]
+Provider Parameter Values: ["us-east-1", "AKIA...", "secret..."]
 
 // Model Configuration
-Model ID: "gpt-4"
+Model ID: "anthropic.claude-3-sonnet-20240229-v1:0"
 Temperature: 0.3
-Max Tokens: 1000
+Max Tokens: 4000
 ```
 
-**Note**: OpenAI provider now includes optimized timeout settings (2-minute read timeout) for reliable operation with complex column matching tasks.
+**Note**: AWS Bedrock provider includes robust error handling and timeout management for reliable operation with complex column matching tasks.
 
 ### Detailed Usage Guide
 
 #### Service Configuration
 
 1. **Provider Configuration**
-   - `Provider ID`: The AI provider to use ("aws-bedrock" or "openai")
-   - `Model ID`: Specific model from the provider (e.g., "gpt-4", "anthropic.claude-v2")
+   - `Provider ID`: Currently only "aws-bedrock" is supported
+   - `Model ID`: Claude model from AWS Bedrock (e.g., "anthropic.claude-3-sonnet-20240229-v1:0")
 
 2. **Provider Parameters**
    - **AWS Bedrock**:
      - `region`: AWS region (e.g., "us-east-1", "us-west-2")
-     - `accessKeyId`: AWS access key ID
-     - `secretAccessKey`: AWS secret access key
-   
-   - **OpenAI**:
-     - `apiKey`: OpenAI API key
+     - `accessKeyId`: AWS access key ID (optional if using IAM roles)
+     - `secretAccessKey`: AWS secret access key (optional if using IAM roles)
 
 3. **Model Configuration**
    - `temperature`: Controls randomness (0.0 = deterministic, 1.0 = creative)
@@ -310,10 +286,10 @@ Max Tokens: 1000
 
 2. **Service Configuration**
    ```
-   Provider ID: "openai"
-   Model ID: "gpt-4"
+   Provider ID: "aws-bedrock"
+   Model ID: "anthropic.claude-3-sonnet-20240229-v1:0"
    Temperature: 0.3
-   Max Tokens: 500
+   Max Tokens: 1000
    ```
 
 3. **Expected Output**
@@ -424,76 +400,60 @@ Provider Parameter Values: ["value1", "value2"]
 - `region`: AWS region (e.g., "us-east-1")
 - `accessKeyId`: AWS access key (optional, uses IAM roles by default)
 - `secretAccessKey`: AWS secret key (optional, uses IAM roles by default)
-
-#### OpenAI
-- `apiKey`: OpenAI API key
-- `organization`: OpenAI organization ID (optional)
-- **Timeout**: 2-minute read timeout (automatically configured)
+- **Models**: Supports Claude 3 Sonnet, Haiku, and Claude v2
 
 ## Configuration System
 
-The plugin uses a centralized configuration system to manage all configurable paths and settings:
+The plugin uses a flexible configuration system for provider parameters:
 
-### Configuration Files
+### Configuration Approach
 
-1. **`config.properties`** - Main configuration file containing:
-   - AI provider settings
-   - File paths for data sources
-   - Maven and build configurations
-   - Client application settings
-
-2. **`CONFIGURATION.md`** - Detailed configuration documentation
-
-### Key Configuration Features
-
-- **Environment Variables**: Support for environment-based configuration
-- **Centralized Management**: Single source of truth for all settings
-- **Cross-Platform**: Works on Windows, Linux, and macOS
-- **Flexible Paths**: Relative and absolute path support
-- **Build Integration**: Maven properties integration
+1. **Provider Parameters**: Key-value pairs passed through Appian process model
+2. **AWS Credentials**: Can be provided via:
+   - Direct parameters (accessKeyId, secretAccessKey)
+   - Environment variables
+   - AWS IAM roles (recommended for production)
+   - AWS credentials file
 
 ### Configuration Priority
 
-1. Command-line arguments (highest priority)
+1. Direct provider parameters (highest priority)
 2. Environment variables
-3. `config.properties` file
+3. AWS credentials chain
 4. Default values (lowest priority)
 
 ## Development and Testing
 
 ### Local Development Environment
 
-The plugin includes a complete development environment:
+The plugin is designed for enterprise deployment and includes:
 
-1. **Test Client**: Standalone Java client for testing plugin functionality
-2. **Sample Data**: CSV files for testing column matching scenarios
-3. **Build Scripts**: Automated build and test scripts for Windows
-4. **Dependencies**: All required JAR files and Maven configuration
+1. **Maven Build System**: Standard Maven project structure
+2. **Comprehensive Logging**: Detailed logging for debugging and monitoring
+3. **Error Handling**: Robust exception handling with meaningful error messages
+4. **Provider Architecture**: Extensible design for adding new AI providers
 
-### Running Tests
+### Building the Plugin
 
-1. **Build the Plugin and Client**:
+1. **Prerequisites**:
+   - Java 17 or later
+   - Maven 3.6 or later
+   - Access to Appian Plugin SDK
+
+2. **Build Command**:
    ```bash
-   .\build-plugin-and-client.bat
+   mvn clean package
    ```
 
-2. **Test with Sample Data**:
-   ```bash
-   .\test-client.bat
-   ```
+3. **Output**: Generates `ai-intelligence-plugin-1.0.4.jar` in the `target/` directory
 
-3. **Sample CSV Files**:
-   - `sibs.csv`: Standard SIBS headers
-   - `VS - OCC Extract MAS -NEW.csv`: Buy sheet headers
-   - `vsi-existing-mappings.csv`: Existing column mappings
+### Testing Status
 
-### Testing Results
-
-**✅ Current Test Status:**
-- **OpenAI Integration**: Fully functional with 2-minute timeout
+**✅ Current Implementation Status:**
+- **AWS Bedrock Integration**: Fully functional with Claude models
 - **Column Matching**: Successfully processes CSV headers
-- **Error Handling**: Gracefully handles truncated responses
-- **Performance**: Optimized for production workloads
+- **Error Handling**: Gracefully handles various error conditions
+- **Enterprise Ready**: Built with production-grade architecture
 
 ## Troubleshooting
 
@@ -511,15 +471,15 @@ The plugin includes a complete development environment:
 - **Symptom**: "Model not found" error
 - **Solution**: Check model ID spelling and provider availability
 
-#### 4. Timeout Issues (RESOLVED ✅)
-- **Previous Symptom**: Request times out during column matching
-- **Solution**: Plugin now includes 2-minute timeout for OpenAI operations
-- **Status**: Fully resolved in v1.0.0
+#### 4. Timeout Issues
+- **Symptom**: Request times out during column matching
+- **Solution**: Check AWS region latency and network connectivity
+- **Prevention**: Use appropriate timeout values for your network conditions
 
 #### 5. JSON Parsing Errors (RESOLVED ✅)
 - **Previous Symptom**: "Failed to parse AI response" errors
 - **Solution**: Robust JSON parsing with fallback mechanisms
-- **Status**: Fully resolved in v1.0.0
+- **Status**: Fully resolved in v1.0.4
 
 ### Debug Mode
 
@@ -530,13 +490,13 @@ Enable debug logging in Appian:
 
 ### Configuration Issues
 
-1. **File Not Found Errors**
-   - Check `config.properties` for correct file paths
-   - Verify files exist in the specified locations
-   - Use absolute paths if relative paths cause issues
+1. **AWS Credential Errors**
+   - Verify AWS credentials are correctly configured
+   - Check that credentials have Bedrock permissions
+   - Ensure the specified AWS region supports Bedrock
 
 2. **Build Failures**
-   - Ensure `config.properties` contains valid Maven paths
+   - Verify Java 17 is installed and configured
    - Check that all required JAR files are present in `lib/` directory
    - Verify Maven installation and configuration
 
@@ -653,15 +613,15 @@ The plugin provides comprehensive error handling:
 - Continuously improve configurations
 
 ### 6. Leverage Recent Improvements
-- Use the optimized timeout settings
-- Take advantage of robust JSON parsing
-- Test with the provided sample data
+- Use the robust JSON parsing capabilities
+- Take advantage of comprehensive error handling
+- Test with realistic column matching scenarios
 
-### 7. Configuration Management
-- Use `config.properties` for centralized configuration
-- Leverage environment variables for environment-specific settings
-- Keep configuration files in version control (excluding sensitive data)
-- Document any custom configuration changes
+### 7. Security Best Practices
+- Never hardcode AWS credentials in process models
+- Use IAM roles when possible for production deployments
+- Regularly rotate access keys
+- Monitor usage and access patterns
 
 ## Testing
 
@@ -676,20 +636,20 @@ The architecture supports comprehensive testing:
 
 ## Current Status and Roadmap
 
-### ✅ **v1.0.0 - Production Ready**
-- **OpenAI Integration**: Fully functional with timeout optimization
-- **AWS Bedrock Integration**: Ready for production use
+### ✅ **v1.0.4 - Current Release**
+- **AWS Bedrock Integration**: Fully functional with Claude models
+- **Enterprise Architecture**: Production-grade design patterns implemented
 - **Robust Error Handling**: Graceful handling of network and parsing issues
 - **Comprehensive Testing**: Validated with real-world scenarios
-- **Development Tools**: Complete testing environment included
-- **Configuration System**: Centralized configuration management with environment variable support
+- **Provider Framework**: Extensible architecture for future providers
+- **Security**: Secure credential handling and input validation
 
 ### 🚀 **Future Enhancements**
-1. **Appian LL Integration**: Native Appian LL provider
-2. **Async Processing**: Non-blocking AI requests
-3. **Batch Processing**: Process multiple requests efficiently
-4. **Provider Metrics**: Performance and usage analytics
-5. **Model Fine-tuning**: Support for custom model training
+1. **OpenAI Integration**: GPT models support
+2. **Appian LL Integration**: Native Appian LL provider
+3. **Async Processing**: Non-blocking AI requests
+4. **Batch Processing**: Process multiple requests efficiently
+5. **Provider Metrics**: Performance and usage analytics
 6. **Multi-Provider Fallback**: Automatic failover between providers
 7. **Enhanced Monitoring**: Real-time performance dashboards
 8. **Advanced Caching**: Intelligent result caching strategies
