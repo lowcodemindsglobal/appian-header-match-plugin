@@ -46,7 +46,6 @@ public class ConfigurationLoader {
             }
         } catch (IOException e) {
             logger.error("Failed to load configuration file: {}", CONFIG_FILE, e);
-            System.err.println("Warning: Could not load config.properties: " + e.getMessage());
         }
     }
     
@@ -81,7 +80,6 @@ public class ConfigurationLoader {
                 return result;
             } catch (NumberFormatException e) {
                 logger.warn("Invalid integer value for {}: {}", key, value);
-                System.err.println("Warning: Invalid integer value for " + key + ": " + value);
             }
         }
         logger.debug("Configuration getInteger({}, {}) = {} (default)", key, defaultValue, defaultValue);
@@ -100,7 +98,6 @@ public class ConfigurationLoader {
                 return result;
             } catch (NumberFormatException e) {
                 logger.warn("Invalid double value for {}: {}", key, value);
-                System.err.println("Warning: Invalid double value for " + key + ": " + value);
             }
         }
         logger.debug("Configuration getDouble({}, {}) = {} (default)", key, defaultValue, defaultValue);
