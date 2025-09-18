@@ -300,42 +300,6 @@
                     <failBuildOnCVSS>7.0</failBuildOnCVSS>
                 </configuration>
             </plugin>
-            
-            <!-- Maven Shade Plugin to create separate shaded JAR -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>shaded</shadedClassifierName>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>org.slf4j:*</exclude>
-                                    <exclude>ch.qos.logback:*</exclude>
-                                    <exclude>org.apache.logging.log4j:*</exclude>
-                                    <!-- belt & suspenders: keep AppMarket "no-no's" out even if added later -->
-                                    <exclude>log4j:log4j</exclude>
-                                    <exclude>commons-lang:commons-lang</exclude>
-                                    <exclude>org.reactivestreams:reactive-streams-tck</exclude>
-                                    <exclude>com.github.tomakehurst:wiremock-jre8</exclude>
-                                    <exclude>org.eclipse.jetty:*</exclude>
-                                    <exclude>org.openjdk.jmh:*</exclude>
-                                    <exclude>org.openjdk.jol:*</exclude>
-                                    <exclude>io.github.classgraph:classgraph</exclude>
-                                </excludes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -375,6 +339,98 @@
                 </executions>
                 </plugin>
             </plugins>
+            </build>
+        </profile>
+
+        <!-- Default profile that builds the shaded artifact for internal use -->
+        <profile>
+            <id>shaded</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.5.1</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                                    <shadedClassifierName>shaded</shadedClassifierName>
+                                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                                    <artifactSet>
+                                        <excludes>
+                                            <exclude>org.slf4j:*</exclude>
+                                            <exclude>ch.qos.logback:*</exclude>
+                                            <exclude>org.apache.logging.log4j:*</exclude>
+                                            <!-- keep AppMarket disallowed libs out even if added later -->
+                                            <exclude>log4j:log4j</exclude>
+                                            <exclude>commons-lang:commons-lang</exclude>
+                                            <exclude>org.reactivestreams:reactive-streams-tck</exclude>
+                                            <exclude>com.github.tomakehurst:wiremock-jre8</exclude>
+                                            <exclude>org.eclipse.jetty:*</exclude>
+                                            <exclude>org.openjdk.jmh:*</exclude>
+                                            <exclude>org.openjdk.jol:*</exclude>
+                                            <exclude>io.github.classgraph:classgraph</exclude>
+                                        </excludes>
+                                    </artifactSet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- AppMarket submission profile: deps under META-INF/lib and sources jar attached -->
+        <profile>
+            <id>appmarket</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.6.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-deps-into-meta-inf-lib</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeScope>runtime</includeScope>
+                                    <excludeScope>provided</excludeScope>
+                                    <outputDirectory>${project.build.outputDirectory}/META-INF/lib</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>false</overWriteSnapshots>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
+                                    <!-- Keep disallowed or provided libs out -->
+                                    <excludeArtifacts>org.slf4j:slf4j-api,org.eclipse.jetty:jetty-server,org.eclipse.jetty:jetty-servlet,com.github.tomakehurst:wiremock-jre8</excludeArtifacts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
