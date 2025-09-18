@@ -10,6 +10,29 @@ A configurable, LLM-agnostic Appian plugin for intelligent column header matchin
 - **Production Testing**: Successfully tested with real CSV data and column matching
 - **Enterprise Architecture**: Built with production-grade design patterns
 
+## Quickstart
+
+1. Install prerequisites
+   - Java 17+
+   - Maven 3.6+
+   - Appian 23.3+ environment (admin access)
+
+2. Build the plugin
+   ```bash
+   # Internal shaded build (default)
+   mvn clean package -P shaded
+
+   # Or AppMarket submission build
+   mvn clean package -P appmarket
+   ```
+   Outputs: `target/ai-intelligence-plugin-1.0.4.jar` (and `-shaded.jar` when using `-P shaded`).
+
+3. Deploy to Appian
+   - Admin Console → Plugins → Upload → select the built JAR → Upload
+
+4. Use in a process model
+   - Drag the `AI Intelligence Service` smart service into your process model and set inputs
+
 ## Overview
 
 This plugin provides a flexible, extensible architecture for AI-powered column header matching that can work with multiple AI providers including:
@@ -124,7 +147,7 @@ appian-header-match-plugin/              # Root project directory
 
 ### Prerequisites
 
-1. **Appian Environment**: Appian 23.1 or later
+1. **Appian Environment**: Appian 24.2 or later
 2. **Java Runtime**: Java 17 or later
 3. **Plugin JAR**: The compiled `ai-intelligence-plugin-1.0.4.jar` file
 4. **AWS Credentials**: AWS access keys and appropriate Bedrock permissions
@@ -373,8 +396,8 @@ public class NewAIProvider extends AbstractAIProvider {
 
 2. **Register in Service Loader**:
 ```properties
-# META-INF/services/com.example.plugins.aiintelligence.provider.AIProvider
-com.example.plugins.aiintelligence.provider.impl.NewAIProvider
+# META-INF/services/com.lcm.plugins.aiintelligence.provider.AIProvider
+com.lcm.plugins.aiintelligence.provider.impl.NewAIProvider
 ```
 
 3. **Configure in Appian**:
@@ -386,6 +409,29 @@ Provider Parameter Values: ["value1", "value2"]
 
 ## Configuration Parameters
 
+### Configuration Reference (at-a-glance)
+
+| Parameter | Type | Default | Notes |
+|---|---|---|---|
+| `providerId` | string | required | e.g., `aws-bedrock` |
+| `modelId` | string | required | e.g., `anthropic.claude-3-sonnet-20240229-v1:0` |
+| `temperature` | number | 0.0 | 0.0 deterministic → 1.0 more creative |
+| `maxTokens` | number | provider default | Maximum response tokens |
+| `topP` | number | provider default | Nucleus sampling |
+| `topK` | number | provider default | Top-k sampling |
+| `sourceHeaders` | array<string> | required | Headers to match from source |
+| `targetHeaders` | array<string> | required | Headers to match against |
+| `existingMappings` | array<object> | optional | Historical mappings/context |
+| `industryContext` | string | optional | Domain-specific context |
+
+Provider-specific (AWS Bedrock):
+
+| Parameter | Type | Default | Notes |
+|---|---|---|---|
+| `region` | string | required | e.g., `us-east-1` |
+| `accessKeyId` | string | optional | Use IAM roles in production when possible |
+| `secretAccessKey` | string | optional | Use IAM roles in production when possible |
+
 ### Common Parameters
 - **Provider ID**: Unique identifier for the AI provider
 - **Model ID**: Specific AI model to use
@@ -393,14 +439,6 @@ Provider Parameter Values: ["value1", "value2"]
 - **Max Tokens**: Maximum response length
 - **Top P**: Nucleus sampling parameter
 - **Top K**: Top-k sampling parameter
-
-### Provider-Specific Parameters
-
-#### AWS Bedrock
-- `region`: AWS region (e.g., "us-east-1")
-- `accessKeyId`: AWS access key (optional, uses IAM roles by default)
-- `secretAccessKey`: AWS secret key (optional, uses IAM roles by default)
-- **Models**: Supports Claude 3 Sonnet, Haiku, and Claude v2
 
 ## Configuration System
 
@@ -440,12 +478,21 @@ The plugin is designed for enterprise deployment and includes:
    - Maven 3.6 or later
    - Access to Appian Plugin SDK
 
-2. **Build Command**:
-   ```bash
-   mvn clean package
-   ```
+2. **Build Commands**:
+  ```bash
+  # AppMarket submission (no uber-jar + sources)
+  mvn clean package -P appmarket
 
-3. **Output**: Generates `ai-intelligence-plugin-1.0.4.jar` in the `target/` directory
+  # Internal shaded build
+  mvn clean package -P shaded
+
+  # Security scan profile (SBOM and license report)
+  mvn -P security-scan verify
+  ```
+
+3. **Outputs**:
+   - With `-P appmarket`: `target/ai-intelligence-plugin-1.0.4.jar`, `target/ai-intelligence-plugin-1.0.4-sources.jar`
+   - With `-P shaded`: `target/ai-intelligence-plugin-1.0.4-shaded.jar`
 
 ### Testing Status
 
@@ -681,7 +728,7 @@ To migrate from the old AWS Bedrock plugin:
 
 ### Documentation
 - [Appian Plugin Development Guide](https://docs.appian.com/suite/help/23.1/Appian_Plugin_Development_Guide.html)
-- [AI Provider Documentation](https://docs.aws.amazon.com/bedrock/ for AWS, https://platform.openai.com/docs for OpenAI)
+- AWS Bedrock: https://docs.aws.amazon.com/bedrock/
 
 ### Community
 - [Appian Community](https://community.appian.com/)
@@ -703,4 +750,4 @@ For questions and support:
 
 ## License
 
-Apache 2.0 License - see LICENSE file for details.
+Apache 2.0 License — see https://www.apache.org/licenses/LICENSE-2.0 for details.
