@@ -7,7 +7,7 @@
 
     <groupId>com.lcm.plugins</groupId>
     <artifactId>ai-intelligence-plugin</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
     <packaging>jar</packaging>
 
     <name>AI Intelligence Plugin</name>
