@@ -2,8 +2,8 @@
     <plugin-info>
         <description>Smart Service Plugin for intelligent column header matching using configurable AI providers</description>
         <vendor name="LOWCODEMINDS" url="https://www.lowcodeminds.com/"/>
-        <version>1.0.4</version>
-        <application-version min="23.1" />
+        <version>1.0.5</version>
+        <application-version min="24.2" />
     </plugin-info>
 
     <!--  Smart Services  -->
